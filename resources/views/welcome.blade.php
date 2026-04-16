@@ -11,7 +11,7 @@
 
     <!-- NAVBAR -->
     <nav class="bg-white shadow-md p-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold">📦 Inventario Hilatura</h1>
+        <h1 class="text-xl font-bold">Inventario Hilatura</h1>
 
         <div>
             @auth
@@ -52,17 +52,17 @@
     <section class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 px-10">
         
         <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="font-bold text-lg mb-2">📦 Gestión de Productos</h3>
+            <h3 class="font-bold text-lg mb-2">Gestión de Productos</h3>
             <p class="text-gray-600">Agrega, edita y elimina productos fácilmente.</p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="font-bold text-lg mb-2">📊 Control de Stock</h3>
+            <h3 class="font-bold text-lg mb-2">Control de Stock</h3>
             <p class="text-gray-600">Visualiza el stock en tiempo real.</p>
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="font-bold text-lg mb-2">🔄 Movimientos</h3>
+            <h3 class="font-bold text-lg mb-2">Movimientos</h3>
             <p class="text-gray-600">Registra entradas y salidas de inventario.</p>
         </div>
 
