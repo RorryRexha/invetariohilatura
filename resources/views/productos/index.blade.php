@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-            📦 Gestión de Productos
+            Gestión de Productos
         </h2>
     </x-slot>
 
@@ -36,7 +36,9 @@
                             <th class="px-6 py-3">Código</th>
                             <th class="px-6 py-3">Descripción</th>
                             <th class="px-6 py-3">Unidad</th>
+                            <th class="px-6 py-3">Stock</th>
                             <th class="px-6 py-3 text-center">Acciones</th>
+                            
                         </tr>
                     </thead>
 
@@ -55,6 +57,13 @@
                                 <td class="px-6 py-3">
                                     {{ $producto->unidad_medida }}
                                 </td>
+
+                                <td class="px-6 py-3 font-semibold">
+                                     {{
+                                        $producto->entradas->sum('cantidad')
+                                         - $producto->salidas->sum('cantidad')
+                                       }}
+                                 </td>
 
                                 <td class="px-6 py-3 text-center space-x-2">
 

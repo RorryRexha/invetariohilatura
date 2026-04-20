@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Entrada extends Model
 {
     protected $fillable = [
+        'folio',
         'producto_id',
         'cantidad',
         'orden_compra',

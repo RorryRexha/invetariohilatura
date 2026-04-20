@@ -24,21 +24,34 @@ class EntradaController extends Controller
 
     //  GUARDAR
     public function store(Request $request)
-    {
-        $request->validate([
-            'producto_id' => 'required',
-            'cantidad' => 'required|numeric|min:1',
-            'orden_compra' => 'required',
-            'fecha_orden' => 'required|date',
-            'fecha_ingreso' => 'required|date',
-        ]);
+{
+    $request->validate([
+        'producto_id' => 'required',
+        'cantidad' => 'required|numeric|min:1',
+        'orden_compra' => 'required',
+        'fecha_orden' => 'required|date',
+        'fecha_ingreso' => 'required|date',
+    ]);
 
-        Entrada::create($request->all());
+    // 🔹 Generar folio antes de guardar
+    $ultimo = Entrada::latest()->first();
+    $num = $ultimo ? $ultimo->id + 1 : 1;
 
-        return redirect()->route('entradas.index')
-            ->with('success', 'Entrada registrada');
-    }
+    $folio = 'ENT-' . str_pad($num, 6, '0', STR_PAD_LEFT);
 
+    // 🔹 Guardar entrada
+    Entrada::create([
+        'producto_id' => $request->producto_id,
+        'cantidad' => $request->cantidad,
+        'orden_compra' => $request->orden_compra,
+        'fecha_orden' => $request->fecha_orden,
+        'fecha_ingreso' => $request->fecha_ingreso,
+        'folio' => $folio
+    ]);
+
+    return redirect()->route('entradas.index')
+        ->with('success', 'Entrada registrada con folio ' . $folio);
+}
     //  EDIT
     public function edit($id)
     {

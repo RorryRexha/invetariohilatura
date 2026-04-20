@@ -8,48 +8,61 @@ use Illuminate\Http\Request;
 
 class SalidaController extends Controller
 {
-    // 📄 LISTAR
+    // LISTAR
     public function index()
     {
-        $salidas = Salida::with('producto')->get();
+        $salidas = Salida::with('producto')->latest()->get();
         return view('salidas.index', compact('salidas'));
     }
 
-    // ➕ FORM
+    // FORM
     public function create()
     {
         $productos = Producto::all();
         return view('salidas.create', compact('productos'));
     }
 
-    // 💾 GUARDAR
+    // GUARDAR
     public function store(Request $request)
     {
         $request->validate([
-            'producto_id' => 'required',
+            'producto_id' => 'required|exists:productos,id',
             'cantidad' => 'required|numeric|min:1',
-            'fecha_salida' => 'required|date',
+            'fecha' => 'required|date',
         ]);
 
-        $producto = Producto::findOrFail($request->producto_id);
+        $producto = Producto::with(['entradas', 'salidas'])
+            ->findOrFail($request->producto_id);
 
-        // 🚨 Validar stock
-        if ($producto->stock < $request->cantidad) {
-            return back()->with('error', 'No hay suficiente stock');
+        // 🔥 STOCK DINÁMICO
+        $stockActual = $producto->entradas->sum('cantidad') 
+                      - $producto->salidas->sum('cantidad');
+
+        //  VALIDACIÓN
+        if ($request->cantidad > $stockActual) {
+            return back()
+                ->with('error', 'No hay suficiente stock')
+                ->withInput();
         }
 
-        // Guardar salida
-        Salida::create($request->all());
+        // GENERAR FOLIO
+        $ultimo = Salida::latest('id')->first();
+        $num = $ultimo ? $ultimo->id + 1 : 1;
+        $folio = 'SAL-' . str_pad($num, 6, '0', STR_PAD_LEFT);
 
-        // Descontar stock
-        $producto->stock -= $request->cantidad;
-        $producto->save();
+        // GUARDAR
+        Salida::create([
+            'producto_id' => $request->producto_id,
+            'cantidad' => $request->cantidad,
+            'fecha' => $request->fecha,
+            'folio' => $folio
+        ]);
 
         return redirect()->route('salidas.index')
-            ->with('success', 'Salida registrada');
+            ->with('success', 'Salida registrada con folio ' . $folio);
     }
 
-    // ✏️ EDIT
+    // EDIT
     public function edit($id)
     {
         $salida = Salida::findOrFail($id);
@@ -58,49 +71,52 @@ class SalidaController extends Controller
         return view('salidas.edit', compact('salida', 'productos'));
     }
 
-    // 🔄 UPDATE
+    // UPDATE
     public function update(Request $request, $id)
     {
         $salida = Salida::findOrFail($id);
-        $producto = Producto::findOrFail($request->producto_id);
 
         $request->validate([
-            'producto_id' => 'required',
+            'producto_id' => 'required|exists:productos,id',
             'cantidad' => 'required|numeric|min:1',
-            'fecha_salida' => 'required|date',
+            'fecha' => 'required|date',
         ]);
 
-        // 🔁 Ajustar stock (devolver lo anterior)
-        $producto->stock += $salida->cantidad;
+        $producto = Producto::with(['entradas', 'salidas'])
+            ->findOrFail($request->producto_id);
 
-        // Validar nuevo stock
-        if ($producto->stock < $request->cantidad) {
-            return back()->with('error', 'Stock insuficiente');
+        //  STOCK ACTUAL
+        $stockActual = $producto->entradas->sum('cantidad') 
+                      - $producto->salidas->sum('cantidad');
+
+        // SUMAR LO ANTERIOR
+        $stockDisponible = $stockActual + $salida->cantidad;
+
+        // VALIDACIÓN
+        if ($request->cantidad > $stockDisponible) {
+            return back()
+                ->with('error', 'Stock insuficiente')
+                ->withInput();
         }
 
-        // Restar nueva cantidad
-        $producto->stock -= $request->cantidad;
-        $producto->save();
-
-        $salida->update($request->all());
+        //  ACTUALIZAR
+        $salida->update([
+            'producto_id' => $request->producto_id,
+            'cantidad' => $request->cantidad,
+            'fecha' => $request->fecha,
+        ]);
 
         return redirect()->route('salidas.index')
-            ->with('success', 'Salida actualizada');
+            ->with('success', 'Salida actualizada correctamente');
     }
 
-    // 🗑️ DELETE
+    // DELETE
     public function destroy($id)
     {
         $salida = Salida::findOrFail($id);
-        $producto = $salida->producto;
-
-        // 🔁 Regresar stock
-        $producto->stock += $salida->cantidad;
-        $producto->save();
-
         $salida->delete();
 
         return redirect()->route('salidas.index')
-            ->with('success', 'Salida eliminada');
+            ->with('success', 'Salida eliminada correctamente');
     }
 }

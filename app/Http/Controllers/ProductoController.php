@@ -10,9 +10,12 @@ class ProductoController extends Controller
     // LISTAR
     public function index()
     {
-        $productos = Producto::all();
-        return view('productos.index', compact('productos'));
+        
+            $productos = Producto::with(['entradas', 'salidas'])->get();
+
+            return view('productos.index', compact('productos'));
     }
+    
 
     // FORM CREAR
     public function create()
@@ -73,4 +76,6 @@ class ProductoController extends Controller
         return redirect()->route('productos.index')
             ->with('success', 'Producto eliminado');
     }
+
+
 }

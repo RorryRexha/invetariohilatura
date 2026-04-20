@@ -39,7 +39,7 @@
 
         @auth
             <a href="{{ url('/dashboard') }}" class="bg-green-500 text-white px-6 py-3 rounded-lg text-lg">
-                Ir al sistema 🚀
+                Ir al sistema 
             </a>
         @else
             <a href="{{ route('login') }}" class="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg">
