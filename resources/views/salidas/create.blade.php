@@ -33,7 +33,6 @@
                                 if (prod) {
                                     unidad = prod.unidad_medida;
 
-                                    // 🔥 calcular stock dinámico en frontend
                                     let entradas = prod.entradas.reduce((t, e) => t + parseFloat(e.cantidad), 0);
                                     let salidas = prod.salidas.reduce((t, s) => t + parseFloat(s.cantidad), 0);
                                     stock = entradas - salidas;
@@ -45,12 +44,30 @@
                         "
                     >
 
-                        <!-- PRODUCTO -->
+                        <!-- 🔍 BUSCADOR -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium">Producto</label>
+                            <label class="block text-sm font-medium">
+                                Buscar Producto (Código o Nombre)
+                            </label>
+
+                            <input 
+                                type="text"
+                                id="buscarProducto"
+                                placeholder="Ej. P001 o Tornillo"
+                                class="mt-1 w-full rounded-lg border-gray-300 shadow-sm"
+                                oninput="this.value = this.value.toUpperCase()"
+                            >
+                        </div>
+
+                        <!-- SELECT PRODUCTOS -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium">
+                                Producto
+                            </label>
 
                             <select 
                                 name="producto_id"
+                                id="productoSelect"
                                 x-model="productoSeleccionado"
                                 class="mt-1 w-full rounded-lg border-gray-300 shadow-sm"
                             >
@@ -58,7 +75,7 @@
 
                                 @foreach($productos as $producto)
                                     <option value="{{ $producto->id }}">
-                                        {{ $producto->descripcion }}
+                                        {{ $producto->codigo }} - {{ $producto->descripcion }}
                                     </option>
                                 @endforeach
                             </select>
@@ -87,7 +104,9 @@
 
                         <!-- CANTIDAD -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium">Cantidad</label>
+                            <label class="block text-sm font-medium">
+                                Cantidad
+                            </label>
 
                             <input 
                                 type="number"
@@ -106,7 +125,9 @@
 
                         <!-- FECHA -->
                         <div class="mb-6">
-                            <label class="block text-sm font-medium">Fecha</label>
+                            <label class="block text-sm font-medium">
+                                Fecha
+                            </label>
 
                             <input 
                                 type="date"
@@ -142,4 +163,18 @@
 
         </div>
     </div>
+
+    <!-- 🔥 SCRIPT BUSCADOR -->
+    <script>
+        document.getElementById('buscarProducto').addEventListener('keyup', function () {
+            let filtro = this.value.toLowerCase();
+            let opciones = document.getElementById('productoSelect').options;
+
+            for (let i = 0; i < opciones.length; i++) {
+                let texto = opciones[i].text.toLowerCase();
+                opciones[i].style.display = texto.includes(filtro) ? '' : 'none';
+            }
+        });
+    </script>
+
 </x-app-layout>

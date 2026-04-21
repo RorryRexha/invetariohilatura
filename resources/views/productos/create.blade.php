@@ -22,8 +22,9 @@
                             type="text" 
                             name="codigo" 
                             value="{{ old('codigo') }}"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="Ej. PROD-001"
+                            oninput="this.value = this.value.toUpperCase()"
+                            class="mt-1 w-full uppercase rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="EJ. PROD-001"
                         >
                         @error('codigo')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -39,8 +40,9 @@
                             type="text" 
                             name="descripcion" 
                             value="{{ old('descripcion') }}"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="Nombre del producto"
+                            oninput="this.value = this.value.toUpperCase()"
+                            class="mt-1 w-full uppercase rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="NOMBRE DEL PRODUCTO"
                         >
                         @error('descripcion')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -54,13 +56,13 @@
                         </label>
                         <select 
                             name="unidad_medida"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            class="mt-1 w-full uppercase rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                         >
-                            <option value="">Selecciona una unidad</option>
-                            <option value="Piezas">Piezas</option>
-                            <option value="Litros">Litros</option>
-                            <option value="Kg">Kilogramos</option>
-                            <option value="Metros">Metros</option>
+                            <option value="">SELECCIONA UNA UNIDAD</option>
+                            <option value="PIEZAS">PIEZAS</option>
+                            <option value="LITROS">LITROS</option>
+                            <option value="KG">KILOGRAMOS</option>
+                            <option value="METROS">METROS</option>
                         </select>
                         @error('unidad_medida')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Nueva Entrada') }}
+            Nueva Entrada
         </h2>
     </x-slot>
 
@@ -13,23 +13,41 @@
                 <form action="{{ route('entradas.store') }}" method="POST">
                     @csrf
 
-                    <!-- Producto -->
+                    <!-- 🔍 BUSCADOR -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Buscar Producto (Código o Nombre)
+                        </label>
+
+                        <input 
+                            type="text"
+                            id="buscarProducto"
+                            placeholder="Ej. P001 o Tornillo"
+                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm"
+                            oninput="this.value = this.value.toUpperCase()"
+                        >
+                    </div>
+
+                    <!-- SELECT PRODUCTOS -->
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Producto
                         </label>
+
                         <select 
                             name="producto_id"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            id="productoSelect"
+                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm"
                         >
                             <option value="">Selecciona un producto</option>
+
                             @foreach($productos as $producto)
-                                <option value="{{ $producto->id }}" 
-                                    {{ old('producto_id') == $producto->id ? 'selected' : '' }}>
-                                    {{ $producto->descripcion }}
+                                <option value="{{ $producto->id }}">
+                                    {{ $producto->codigo }} - {{ $producto->descripcion }}
                                 </option>
                             @endforeach
                         </select>
+
                         @error('producto_id')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -40,13 +58,15 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Cantidad
                         </label>
+
                         <input 
                             type="number" 
                             name="cantidad" 
                             value="{{ old('cantidad') }}"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm"
                             placeholder="Ej. 100"
                         >
+
                         @error('cantidad')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -57,13 +77,16 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Orden de Compra
                         </label>
+
                         <input 
                             type="text" 
                             name="orden_compra" 
                             value="{{ old('orden_compra') }}"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            oninput="this.value = this.value.toUpperCase()"
+                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm"
                             placeholder="Ej. OC-12345"
                         >
+
                         @error('orden_compra')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -74,12 +97,14 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Fecha de Orden
                         </label>
+
                         <input 
                             type="date" 
                             name="fecha_orden" 
                             value="{{ old('fecha_orden') }}"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm"
                         >
+
                         @error('fecha_orden')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -90,12 +115,14 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Fecha de Ingreso
                         </label>
+
                         <input 
                             type="date" 
                             name="fecha_ingreso" 
                             value="{{ old('fecha_ingreso') }}"
-                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm"
                         >
+
                         @error('fecha_ingreso')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -121,4 +148,18 @@
 
         </div>
     </div>
+
+    <!-- 🔥 SCRIPT BUSCADOR -->
+    <script>
+        document.getElementById('buscarProducto').addEventListener('keyup', function () {
+            let filtro = this.value.toLowerCase();
+            let opciones = document.getElementById('productoSelect').options;
+
+            for (let i = 0; i < opciones.length; i++) {
+                let texto = opciones[i].text.toLowerCase();
+                opciones[i].style.display = texto.includes(filtro) ? '' : 'none';
+            }
+        });
+    </script>
+
 </x-app-layout>

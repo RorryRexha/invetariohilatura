@@ -21,6 +21,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('productos', ProductoController::class);
     Route::resource('entradas', EntradaController::class);
     Route::resource('salidas', SalidaController::class);
+    Route::get('/entradas-excel', [EntradaController::class, 'exportExcel'])
+    ->name('entradas.excel');
+    Route::get('entradas/pdf', [EntradaController::class, 'exportPDF'])
+    ->name('entradas.pdf');
 
 });
 

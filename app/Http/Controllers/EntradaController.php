@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Entrada;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Exports\EntradasExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EntradaController extends Controller
 {
@@ -88,5 +91,26 @@ class EntradaController extends Controller
 
         return redirect()->route('entradas.index')
             ->with('success', 'Entrada eliminada');
+    }
+
+
+    public function exportExcel()
+    {
+         return Excel::download(new EntradasExport, 'entradas.xlsx');
+    }
+
+    public function exportPDF()
+    {
+         $entradas = Entrada::with('producto')->get();
+
+         $pdf = Pdf::loadView('entradas.pdf', compact('entradas'));
+
+         return $pdf->stream('reporte_entradas.pdf');
+    }
+
+
+    public function show($id)
+    {
+        //
     }
 }

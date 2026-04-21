@@ -11,9 +11,7 @@
                          alt="Logo" 
                          class="h-12 w-auto object-contain">
 
-                    <span class="text-lg font-semibold text-gray-800">
-                        Inventario
-                    </span>
+                    
                 </a>
 
                 <!-- MENÚ -->
