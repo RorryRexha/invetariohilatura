@@ -25,6 +25,10 @@ Route::middleware('auth')->group(function () {
     ->name('entradas.excel');
     Route::get('entradas-pdf', [EntradaController::class, 'exportPDF'])
     ->name('entradas.pdf');
+     Route::get('salidas-pdf', [SalidaController::class, 'pdf'])
+    ->name('salidas.pdf');
+     Route::get('/salidas-excel', [SalidaController::class, 'exportExcel'])
+    ->name('salidas.excel');
 
 });
 

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Salida;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SalidasExport;
 
 class SalidaController extends Controller
 {
@@ -118,5 +121,23 @@ class SalidaController extends Controller
 
         return redirect()->route('salidas.index')
             ->with('success', 'Salida eliminada correctamente');
+    }
+    public function exportExcel()
+    {
+        return Excel::download(new SalidasExport, 'salidas.xlsx');
+    }
+
+    public function pdf()
+    {
+         $salidas = Salida::with('producto')->get();
+
+         $pdf = Pdf::loadView('salidas.pdf', compact('salidas'));
+
+         return $pdf->download('reporte_salidas.pdf');
+    }
+
+    public function show($id)
+    {
+        //
     }
 }
