@@ -119,8 +119,9 @@
                         <input 
                             type="date" 
                             name="fecha_ingreso" 
-                            value="{{ old('fecha_ingreso') }}"
+                            value="{{ old('fecha_ingreso', \Carbon\Carbon::now()->format('Y-m-d')) }}"
                             class="mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm"
+
                         >
 
                         @error('fecha_ingreso')

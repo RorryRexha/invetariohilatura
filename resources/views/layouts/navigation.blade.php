@@ -1,4 +1,5 @@
-<nav x-data="{ open: false }" class="bg-white border-b shadow-sm">
+<nav x-data="{ open: false }" 
+     class="bg-white border-b shadow-sm fixed top-0 left-0 w-full z-50">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -11,7 +12,6 @@
                          alt="Logo" 
                          class="h-12 w-auto object-contain">
 
-                    
                 </a>
 
                 <!-- MENÚ -->
