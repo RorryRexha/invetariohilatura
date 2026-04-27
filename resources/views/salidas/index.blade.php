@@ -28,15 +28,15 @@
                     >
 
                     <!-- PDF -->
-                    <a href="{{ route('salidas.pdf') }}"
-                       class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow text-center">
-                        📄 PDF
+                    <a href="{{ route('salidas.excel') }}"
+                       class="bg-green-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow text-center">
+                        Excel
                     </a>
 
                     <!-- EXCEL -->
-                    <a href="{{ route('salidas.excel') }}"
-                       class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded shadow text-center">
-                        📊 Excel
+                    <a href="{{ route('salidas.pdf') }}"
+                       class="bg-red-700 hover:bg-green-800 text-white px-4 py-2 rounded shadow text-center">
+                        PDF
                     </a>
 
                     <!-- NUEVA -->

@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $totalProductos = Producto::count();
 
         $entradasHoy = Entrada::whereDate('fecha_ingreso', now())->count();
-        $salidasHoy = Salida::whereDate('fecha_salida', now())->count();
+        $salidasHoy = Salida::whereDate('fecha', now())->count();
 
         $entradas = Entrada::with('producto')
             ->latest('fecha_ingreso')
@@ -30,7 +30,7 @@ class DashboardController extends Controller
             });
 
         $salidas = Salida::with('producto')
-            ->latest('fecha_salida')
+            ->latest('fecha')
             ->take(5)
             ->get()
             ->map(function ($s) {
@@ -38,7 +38,7 @@ class DashboardController extends Controller
                     'tipo' => 'salida',
                     'producto' => $s->producto->descripcion,
                     'cantidad' => $s->cantidad,
-                    'fecha' => $s->fecha_salida,
+                    'fecha' => $s->fecha,
                 ];
             });
 

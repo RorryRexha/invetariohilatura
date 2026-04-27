@@ -13,6 +13,7 @@
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
                     Bienvenido, {{ Auth::user()->name }}
                 </h3>
+
                 <p class="text-gray-600 dark:text-gray-400 mt-1">
                     Controla entradas, salidas y stock de productos en tiempo real.
                 </p>
@@ -38,6 +39,9 @@
 
             </div>
 
+            <!-- SOLO ADMIN -->
+            @if(Auth::user()->role == 'admin')
+
             <!-- Acciones rápidas -->
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-4">
@@ -45,6 +49,7 @@
                 </h3>
 
                 <div class="flex flex-wrap gap-4">
+
                     <a href="{{ route('productos.create') }}"
                         class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
                         + Nuevo Producto
@@ -59,8 +64,11 @@
                         class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600">
                         + Registrar Salida
                     </a>
+
                 </div>
             </div>
+
+            @endif
 
             <!-- Últimos movimientos -->
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
@@ -77,17 +85,23 @@
                             <th class="px-4 py-2">Fecha</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @forelse($movimientos ?? [] as $mov)
                             <tr class="border-b dark:border-gray-700">
+
                                 <td class="px-4 py-2">
                                     <span class="{{ $mov['tipo'] == 'entrada' ? 'text-green-500' : 'text-red-500' }}">
                                         {{ ucfirst($mov['tipo']) }}
                                     </span>
                                 </td>
+
                                 <td class="px-4 py-2">{{ $mov['producto'] }}</td>
+
                                 <td class="px-4 py-2">{{ $mov['cantidad'] }}</td>
+
                                 <td class="px-4 py-2">{{ $mov['fecha'] }}</td>
+
                             </tr>
                         @empty
                             <tr>
@@ -97,6 +111,7 @@
                             </tr>
                         @endforelse
                     </tbody>
+
                 </table>
             </div>
 
