@@ -1,11 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\SalidaController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,10 +54,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::middleware('admin')->group(function () {
 
-        // PRODUCTOS
+        /* PRODUCTOS */
         Route::resource('productos', ProductoController::class);
 
-        // ENTRADAS
+        /* ENTRADAS */
         Route::resource('entradas', EntradaController::class);
 
         Route::get('/entradas-excel', [EntradaController::class, 'exportExcel'])
@@ -65,7 +65,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/entradas-pdf', [EntradaController::class, 'exportPDF'])
             ->name('entradas.pdf');
-
     });
 
     /*
@@ -74,15 +73,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    // SALIDAS
+    /* SALIDAS */
     Route::resource('salidas', SalidaController::class);
-
-    Route::get('/salidas-pdf', [SalidaController::class, 'pdf'])
-        ->name('salidas.pdf');
 
     Route::get('/salidas-excel', [SalidaController::class, 'exportExcel'])
         ->name('salidas.excel');
 
+    Route::get('/salidas-pdf', [SalidaController::class, 'pdf'])
+        ->name('salidas.pdf');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

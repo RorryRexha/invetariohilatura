@@ -1,58 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <title>Reporte de Entradas</title>
+
     <style>
-        body { font-family: Arial, sans-serif; }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        body{
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+            color: #222;
+            margin: 25px;
         }
 
-        .logo {
-            height: 60px;
+        .header{
+            width: 100%;
+            margin-bottom: 20px;
         }
 
-        .titulo {
+        .logo{
+            width: 120px;
+        }
+
+        .titulo{
             text-align: center;
-            flex-grow: 1;
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: -55px;
+        }
+
+        .subtitulo{
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .fecha{
+            text-align: right;
+            font-size: 11px;
+            margin-top: 15px;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th{
+            background: #e5e7eb;
+            border: 1px solid #000;
+            padding: 7px;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        td{
+            border: 1px solid #000;
+            padding: 7px;
+            font-size: 11px;
+        }
+
+        .text-center{
+            text-align: center;
+        }
+
+        .text-right{
+            text-align: right;
+        }
+
+        .codigo{
+            color: #1d4ed8;
             font-weight: bold;
         }
 
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 20px; 
+        .footer{
+            margin-top: 15px;
+            font-size: 11px;
+            text-align: right;
+            font-weight: bold;
         }
 
-        th, td { 
-            border: 1px solid #000; 
-            padding: 8px; 
-            font-size: 12px; 
+        .vacio{
+            text-align: center;
+            padding: 12px;
         }
-
-        th { background: #eee; }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
+    <!-- ENCABEZADO -->
     <div class="header">
-        <!-- LOGO -->
-        <img src="{{ public_path('images/logoSatex.png') }}"
-        style="width: 110px; position: absolute; top: 10px; left: 10px;">
 
-        <!-- TITULO -->
+        <img src="{{ public_path('images/logoSatex.png') }}" class="logo">
+
         <div class="titulo">
             REPORTE DE ENTRADAS
         </div>
 
-        <!-- ESPACIO (para balance visual) -->
-        <div style="width: 80px;"></div>
+        <div class="subtitulo">
+            Sistema de Inventario - Hilatura
+        </div>
+
+        <div class="fecha">
+            Fecha de impresión:
+            {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}
+        </div>
+
     </div>
 
     <!-- TABLA -->
@@ -60,24 +114,58 @@
         <thead>
             <tr>
                 <th>Folio</th>
+                <th>Código</th>
                 <th>Producto</th>
                 <th>Cantidad</th>
-                <th>Orden</th>
+                <th>Orden Compra</th>
                 <th>Fecha</th>
             </tr>
         </thead>
+
         <tbody>
-            @foreach($entradas as $entrada)
+
+            @forelse($entradas as $entrada)
                 <tr>
-                    <td>{{ $entrada->folio }}</td>
-                    <td>{{ $entrada->producto->descripcion ?? 'N/A' }}</td>
-                    <td>{{ $entrada->cantidad }}</td>
-                    <td>{{ $entrada->orden_compra }}</td>
-                    <td>{{ \Carbon\Carbon::parse($entrada->fecha_ingreso)->format('d/m/Y') }}</td>
+                    <td class="text-center">
+                        {{ $entrada->folio }}
+                    </td>
+
+                    <td class="text-center codigo">
+                        {{ $entrada->producto->codigo ?? 'N/A' }}
+                    </td>
+
+                    <td>
+                        {{ $entrada->producto->descripcion ?? 'N/A' }}
+                    </td>
+
+                    <td class="text-right">
+                        {{ $entrada->cantidad }}
+                        {{ $entrada->producto->unidad_medida ?? '' }}
+                    </td>
+
+                    <td class="text-center">
+                        {{ $entrada->orden_compra }}
+                    </td>
+
+                    <td class="text-center">
+                        {{ \Carbon\Carbon::parse($entrada->fecha_ingreso)->format('d/m/Y') }}
+                    </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="6" class="vacio">
+                        No se encontraron registros.
+                    </td>
+                </tr>
+            @endforelse
+
         </tbody>
     </table>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Total de registros: {{ $entradas->count() }}
+    </div>
 
 </body>
 </html>

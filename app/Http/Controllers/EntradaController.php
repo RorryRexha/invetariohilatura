@@ -11,79 +11,104 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class EntradaController extends Controller
 {
-    //  LISTA
-    public function index()
+    // ===============================
+    // LISTADO
+    // ===============================
+    public function index(Request $request)
     {
-        $entradas = Entrada::with('producto')->get();
+        $query = Entrada::with('producto');
+
+        if ($request->filled('search')) {
+            $this->aplicarFiltro($query, $request->search);
+        }
+
+        $entradas = $query->orderBy('id', 'desc')->get();
+
         return view('entradas.index', compact('entradas'));
     }
 
-    //  FORM
+    // ===============================
+    // FORM CREAR
+    // ===============================
     public function create()
     {
-        $productos = Producto::all();
+        $productos = Producto::orderBy('descripcion')->get();
+
         return view('entradas.create', compact('productos'));
     }
 
-    //  GUARDAR
+    // ===============================
+    // GUARDAR
+    // ===============================
     public function store(Request $request)
-{
-    $request->validate([
-        'producto_id' => 'required',
-        'cantidad' => 'required|numeric|min:1',
-        'orden_compra' => 'required',
-        'fecha_orden' => 'required|date',
-        'fecha_ingreso' => 'required|date',
-    ]);
+    {
+        $request->validate([
+            'producto_id'   => 'required',
+            'cantidad'      => 'required|numeric|min:1',
+            'orden_compra'  => 'required',
+            'fecha_orden'   => 'required|date',
+            'fecha_ingreso' => 'required|date',
+        ]);
 
-    // 🔹 Generar folio antes de guardar
-    $ultimo = Entrada::latest()->first();
-    $num = $ultimo ? $ultimo->id + 1 : 1;
+        $ultimo = Entrada::latest('id')->first();
+        $num = $ultimo ? $ultimo->id + 1 : 1;
 
-    $folio = 'ENT-' . str_pad($num, 6, '0', STR_PAD_LEFT);
+        $folio = 'ENT-' . str_pad($num, 6, '0', STR_PAD_LEFT);
 
-    // 🔹 Guardar entrada
-    Entrada::create([
-        'producto_id' => $request->producto_id,
-        'cantidad' => $request->cantidad,
-        'orden_compra' => $request->orden_compra,
-        'fecha_orden' => $request->fecha_orden,
-        'fecha_ingreso' => $request->fecha_ingreso,
-        'folio' => $folio
-    ]);
+        Entrada::create([
+            'producto_id'   => $request->producto_id,
+            'cantidad'      => $request->cantidad,
+            'orden_compra'  => strtoupper($request->orden_compra),
+            'fecha_orden'   => $request->fecha_orden,
+            'fecha_ingreso' => $request->fecha_ingreso,
+            'folio'         => $folio,
+        ]);
 
-    return redirect()->route('entradas.index')
-        ->with('success', 'Entrada registrada con folio ' . $folio);
-}
-    //  EDIT
+        return redirect()->route('entradas.index')
+            ->with('success', 'Entrada registrada con folio ' . $folio);
+    }
+
+    // ===============================
+    // EDITAR
+    // ===============================
     public function edit($id)
     {
         $entrada = Entrada::findOrFail($id);
-        $productos = Producto::all();
+        $productos = Producto::orderBy('descripcion')->get();
 
         return view('entradas.edit', compact('entrada', 'productos'));
     }
 
-    //  UPDATE
+    // ===============================
+    // ACTUALIZAR
+    // ===============================
     public function update(Request $request, $id)
     {
         $entrada = Entrada::findOrFail($id);
 
         $request->validate([
-            'producto_id' => 'required',
-            'cantidad' => 'required|numeric|min:1',
-            'orden_compra' => 'required',
-            'fecha_orden' => 'required|date',
+            'producto_id'   => 'required',
+            'cantidad'      => 'required|numeric|min:1',
+            'orden_compra'  => 'required',
+            'fecha_orden'   => 'required|date',
             'fecha_ingreso' => 'required|date',
         ]);
 
-        $entrada->update($request->all());
+        $entrada->update([
+            'producto_id'   => $request->producto_id,
+            'cantidad'      => $request->cantidad,
+            'orden_compra'  => strtoupper($request->orden_compra),
+            'fecha_orden'   => $request->fecha_orden,
+            'fecha_ingreso' => $request->fecha_ingreso,
+        ]);
 
         return redirect()->route('entradas.index')
             ->with('success', 'Entrada actualizada');
     }
 
-    // DELETE
+    // ===============================
+    // ELIMINAR
+    // ===============================
     public function destroy($id)
     {
         $entrada = Entrada::findOrFail($id);
@@ -93,21 +118,62 @@ class EntradaController extends Controller
             ->with('success', 'Entrada eliminada');
     }
 
-
-    public function exportExcel()
+    // ===============================
+    // EXPORTAR EXCEL
+    // ===============================
+    public function exportExcel(Request $request)
     {
-         return Excel::download(new EntradasExport, 'entradas.xlsx');
+        $query = Entrada::with('producto');
+
+        if ($request->filled('search')) {
+            $this->aplicarFiltro($query, $request->search);
+        }
+
+        $entradas = $query->orderBy('id', 'desc')->get();
+
+        return Excel::download(
+            new EntradasExport($entradas),
+            'entradas.xlsx'
+        );
     }
 
-    public function exportPDF()
+    // ===============================
+    // EXPORTAR PDF
+    // ===============================
+    public function exportPDF(Request $request)
     {
-         $entradas = Entrada::with('producto')->get();
+        $query = Entrada::with('producto');
 
-         $pdf = Pdf::loadView('entradas.pdf', compact('entradas'));
+        if ($request->filled('search')) {
+            $this->aplicarFiltro($query, $request->search);
+        }
 
-         return $pdf->stream('reporte_entradas.pdf');
+        $entradas = $query->orderBy('id', 'desc')->get();
+
+        $pdf = Pdf::loadView('entradas.pdf', [
+            'entradas' => $entradas
+        ])->setPaper('A4', 'landscape');
+
+        return $pdf->stream('reporte_entradas.pdf');
     }
 
+    // ===============================
+    // FILTRO GENERAL
+    // ===============================
+    private function aplicarFiltro($query, $search)
+    {
+        $search = trim($search);
+
+        $query->where(function ($q) use ($search) {
+            $q->where('folio', 'like', "%{$search}%")
+              ->orWhere('orden_compra', 'like', "%{$search}%")
+              ->orWhere('fecha_ingreso', 'like', "%{$search}%")
+              ->orWhereHas('producto', function ($p) use ($search) {
+                  $p->where('codigo', 'like', "%{$search}%")
+                    ->orWhere('descripcion', 'like', "%{$search}%");
+              });
+        });
+    }
 
     public function show($id)
     {

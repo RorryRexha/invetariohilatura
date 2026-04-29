@@ -23,19 +23,19 @@
                     <input 
                         type="text"
                         x-model="search"
-                        placeholder="Buscar por folio o producto..."
+                        placeholder="Buscar por folio, código o producto..."
                         class="px-4 py-2 border rounded-lg shadow-sm w-full sm:w-64"
                     >
 
-                    <!-- PDF -->
+                    <!-- EXCEL -->
                     <a href="{{ route('salidas.excel') }}"
-                       class="bg-green-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow text-center">
+                       class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded shadow text-center">
                         Excel
                     </a>
 
-                    <!-- EXCEL -->
+                    <!-- PDF -->
                     <a href="{{ route('salidas.pdf') }}"
-                       class="bg-red-700 hover:bg-green-800 text-white px-4 py-2 rounded shadow text-center">
+                       class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow text-center">
                         PDF
                     </a>
 
@@ -70,6 +70,7 @@
                     <thead class="bg-gray-100 dark:bg-gray-700 text-xs uppercase">
                         <tr>
                             <th class="px-6 py-3">Folio</th>
+                            <th class="px-6 py-3">Código</th>
                             <th class="px-6 py-3">Producto</th>
                             <th class="px-6 py-3">Cantidad</th>
                             <th class="px-6 py-3">Fecha</th>
@@ -83,6 +84,7 @@
                             <tr 
                                 x-show="
                                     '{{ strtolower($salida->folio ?? '') }}'.includes(search.toLowerCase()) ||
+                                    '{{ strtolower($salida->producto->codigo ?? '') }}'.includes(search.toLowerCase()) ||
                                     '{{ strtolower($salida->producto->descripcion ?? '') }}'.includes(search.toLowerCase())
                                 "
                                 class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -93,6 +95,11 @@
                                     <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-semibold">
                                         {{ $salida->folio }}
                                     </span>
+                                </td>
+
+                                <!-- CÓDIGO -->
+                                <td class="px-6 py-3 font-medium text-indigo-600">
+                                    {{ $salida->producto->codigo ?? 'N/A' }}
                                 </td>
 
                                 <!-- PRODUCTO -->
@@ -145,7 +152,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-6 text-gray-500">
+                                <td colspan="7" class="text-center py-6 text-gray-500">
                                     No hay salidas registradas
                                 </td>
                             </tr>
