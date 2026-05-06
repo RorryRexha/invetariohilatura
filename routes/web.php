@@ -6,7 +6,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\SalidaController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | WEB ROUTES
@@ -67,6 +67,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('entradas.pdf');
     });
 
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('users', UserController::class);
+    });
+
+    Route::middleware(['role:admin'])->group(function () {
+    Route::get('/usuarios', [UserController::class, 'index']);
+    });
+
     /*
     |--------------------------------------------------------------------------
     | ADMIN Y USUARIO
@@ -82,5 +91,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/salidas-pdf', [SalidaController::class, 'pdf'])
         ->name('salidas.pdf');
 });
+
+// SOLO ADMIN
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('productos', ProductoController::class);
+    Route::resource('entradas', EntradaController::class);
+});
+
+// ADMIN + ALMACEN
+Route::middleware(['auth', 'role:admin|almacen'])->group(function () {
+    Route::resource('salidas', SalidaController::class);
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('productos', ProductoController::class);
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('users', UserController::class);
+});
+
+Route::resource('users', UserController::class)->middleware('role:admin');
 
 require __DIR__ . '/auth.php';

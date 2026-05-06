@@ -25,7 +25,7 @@
                     </a>
 
                     <!-- SOLO ADMIN -->
-                    @if(Auth::user()->role == 'admin')
+                    @role('admin')
 
                         <a href="{{ route('productos.index') }}"
                            class="transition px-2 py-1 rounded
@@ -43,9 +43,18 @@
                             Entradas
                         </a>
 
-                    @endif
+                        <!-- PANEL USUARIOS (NUEVO 🔥) -->
+                        <a href="{{ route('users.index') }}"
+                           class="transition px-2 py-1 rounded
+                           {{ request()->routeIs('users.*')
+                                ? 'bg-indigo-100 text-indigo-600 font-semibold'
+                                : 'text-gray-600 hover:text-indigo-600' }}">
+                            Usuarios
+                        </a>
 
-                    <!-- ADMIN Y USUARIO -->
+                    @endrole
+
+                    <!-- ADMIN Y OTROS -->
                     <a href="{{ route('salidas.index') }}"
                        class="transition px-2 py-1 rounded
                        {{ request()->routeIs('salidas.*')
@@ -65,8 +74,9 @@
                         {{ Auth::user()->name }}
                     </p>
 
+                    <!-- 👇 USAR ROL DE SPATIE -->
                     <p class="text-xs text-gray-500 uppercase">
-                        {{ Auth::user()->role }}
+                        {{ Auth::user()->getRoleNames()->first() }}
                     </p>
                 </div>
 
@@ -99,8 +109,7 @@
             Dashboard
         </a>
 
-        @if(Auth::user()->role == 'admin')
-
+        @role('admin')
             <a href="{{ route('productos.index') }}" class="block text-gray-700">
                 Productos
             </a>
@@ -109,7 +118,10 @@
                 Entradas
             </a>
 
-        @endif
+            <a href="{{ route('users.index') }}" class="block text-gray-700">
+                Usuarios
+            </a>
+        @endrole
 
         <a href="{{ route('salidas.index') }}" class="block text-gray-700">
             Salidas
@@ -121,7 +133,7 @@
             </p>
 
             <p class="text-xs text-gray-500 uppercase">
-                {{ Auth::user()->role }}
+                {{ Auth::user()->getRoleNames()->first() }}
             </p>
         </div>
 
