@@ -24,9 +24,8 @@
                         Dashboard
                     </a>
 
-                    <!-- SOLO ADMIN -->
-                    @role('admin')
-
+                    <!-- PRODUCTOS (ADMIN + ALMACEN) -->
+                    @role('admin|almacen')
                         <a href="{{ route('productos.index') }}"
                            class="transition px-2 py-1 rounded
                            {{ request()->routeIs('productos.*')
@@ -34,7 +33,10 @@
                                 : 'text-gray-600 hover:text-blue-600' }}">
                             Productos
                         </a>
+                    @endrole
 
+                    <!-- ENTRADAS (SOLO ADMIN) -->
+                    @role('admin')
                         <a href="{{ route('entradas.index') }}"
                            class="transition px-2 py-1 rounded
                            {{ request()->routeIs('entradas.*')
@@ -43,7 +45,7 @@
                             Entradas
                         </a>
 
-                        <!-- PANEL USUARIOS (NUEVO 🔥) -->
+                        <!-- USUARIOS -->
                         <a href="{{ route('users.index') }}"
                            class="transition px-2 py-1 rounded
                            {{ request()->routeIs('users.*')
@@ -51,10 +53,9 @@
                                 : 'text-gray-600 hover:text-indigo-600' }}">
                             Usuarios
                         </a>
-
                     @endrole
 
-                    <!-- ADMIN Y OTROS -->
+                    <!-- SALIDAS (TODOS) -->
                     <a href="{{ route('salidas.index') }}"
                        class="transition px-2 py-1 rounded
                        {{ request()->routeIs('salidas.*')
@@ -74,7 +75,6 @@
                         {{ Auth::user()->name }}
                     </p>
 
-                    <!-- 👇 USAR ROL DE SPATIE -->
                     <p class="text-xs text-gray-500 uppercase">
                         {{ Auth::user()->getRoleNames()->first() }}
                     </p>
@@ -109,11 +109,15 @@
             Dashboard
         </a>
 
-        @role('admin')
+        <!-- PRODUCTOS (ADMIN + ALMACEN) -->
+        @role('admin|almacen')
             <a href="{{ route('productos.index') }}" class="block text-gray-700">
                 Productos
             </a>
+        @endrole
 
+        <!-- ENTRADAS Y USUARIOS (SOLO ADMIN) -->
+        @role('admin')
             <a href="{{ route('entradas.index') }}" class="block text-gray-700">
                 Entradas
             </a>
@@ -123,6 +127,7 @@
             </a>
         @endrole
 
+        <!-- SALIDAS -->
         <a href="{{ route('salidas.index') }}" class="block text-gray-700">
             Salidas
         </a>

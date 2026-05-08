@@ -34,10 +34,12 @@
                     </form>
 
                     <!-- NUEVO -->
+                     @role('admin')
                     <a href="{{ route('productos.create') }}"
                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow text-center">
                         + Nuevo
                     </a>
+                    @endrole
 
                 </div>
             </div>
@@ -85,7 +87,7 @@
                                         - $producto->salidas->sum('cantidad')
                                     }}
                                 </td>
-
+                                @role('admin')
                                 <td class="px-6 py-3 text-center space-x-2">
 
                                     <a href="{{ route('productos.edit', $producto->id) }}"
@@ -107,6 +109,7 @@
                                     </form>
 
                                 </td>
+                                @endrole
                             </tr>
                         @empty
                             <tr>

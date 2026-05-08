@@ -127,6 +127,7 @@
                                 </td>
 
                                 <!-- ACCIONES -->
+                                 @role('admin')
                                 <td class="px-6 py-3 text-center space-x-2">
 
                                     <a href="{{ route('salidas.edit', $salida->id) }}"
@@ -148,6 +149,7 @@
                                     </form>
 
                                 </td>
+                                @endrole
 
                             </tr>
                         @empty
