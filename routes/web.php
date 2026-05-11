@@ -168,6 +168,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     });
 
+    Route::post('/productos/importar', [ProductoController::class, 'importar'])
+    ->name('productos.importar');
+
 });
 
 require __DIR__ . '/auth.php';

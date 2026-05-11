@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Imports\ProductosImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductoController extends Controller
 {
@@ -86,6 +88,17 @@ class ProductoController extends Controller
         return redirect()->route('productos.index')
             ->with('success', 'Producto eliminado');
     }
+
+    public function importar(Request $request)
+{
+    $request->validate([
+        'archivo' => 'required|mimes:xlsx,csv,xls'
+    ]);
+
+    Excel::import(new ProductosImport, $request->file('archivo'));
+
+    return back()->with('success', 'Productos importados correctamente');
+}
 
 
 

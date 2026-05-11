@@ -14,9 +14,7 @@
                     Bienvenido, {{ Auth::user()->name }}
                 </h3>
 
-                <p class="text-gray-600 dark:text-gray-400 mt-1">
-                    Controla entradas, salidas y stock de productos en tiempo real.
-                </p>
+                
             </div>
 
             <!-- Cards -->

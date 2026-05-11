@@ -9,50 +9,88 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <!-- HEADER -->
-            <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
 
                 <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
                     Lista de productos
                 </h3>
 
                 <!-- CONTROLES -->
-                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <div class="flex flex-col gap-3 w-full sm:w-auto">
 
-                    <!-- 🔍 BUSCADOR BACKEND -->
-                    <form method="GET" action="{{ route('productos.index') }}" class="flex gap-2">
+                    <!-- BUSCADOR -->
+                    <form method="GET"
+                          action="{{ route('productos.index') }}"
+                          class="flex flex-col sm:flex-row gap-2">
+
                         <input 
                             type="text"
                             name="search"
                             value="{{ request('search') }}"
                             placeholder="Buscar código o descripción..."
-                            class="px-4 py-2 border rounded-lg shadow-sm w-full sm:w-64"
+                            class="px-4 py-2 border rounded-lg shadow-sm w-full sm:w-72"
                         >
 
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
                             Buscar
                         </button>
+
                     </form>
 
-                    <!-- NUEVO -->
-                     @role('admin')
-                    <a href="{{ route('productos.create') }}"
-                       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow text-center">
-                        + Nuevo
-                    </a>
+                    @role('admin')
+
+                    <!-- IMPORTAR + NUEVO -->
+                    <div class="flex flex-col sm:flex-row gap-2">
+
+                        <!-- IMPORTAR EXCEL -->
+                        <form action="{{ route('productos.importar') }}"
+                              method="POST"
+                              enctype="multipart/form-data"
+                              class="flex flex-col sm:flex-row gap-2">
+
+                            @csrf
+
+                            <input type="file"
+                                   name="archivo"
+                                   required
+                                   class="border rounded px-3 py-2 text-sm bg-white">
+
+                            <button type="submit"
+                                    class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded shadow">
+                                Importar Excel
+                            </button>
+
+                        </form>
+
+                        <!-- NUEVO -->
+                        <a href="{{ route('productos.create') }}"
+                           class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow text-center">
+                            + Nuevo
+                        </a>
+
+                    </div>
+
                     @endrole
 
                 </div>
             </div>
 
-            <!-- MENSAJE -->
+            <!-- ALERTAS -->
             @if(session('success'))
-                <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
+                <div class="mb-4 p-4 bg-green-100 text-green-700 rounded shadow">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 p-4 bg-red-100 text-red-700 rounded shadow">
+                    {{ session('error') }}
                 </div>
             @endif
 
             <!-- TABLA -->
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto">
+
                 <table class="min-w-full text-sm text-left text-gray-600 dark:text-gray-300">
 
                     <thead class="bg-gray-100 dark:bg-gray-700 text-xs uppercase">
@@ -61,37 +99,71 @@
                             <th class="px-6 py-3">Descripción</th>
                             <th class="px-6 py-3">Unidad</th>
                             <th class="px-6 py-3">Stock</th>
-                            <th class="px-6 py-3 text-center">Acciones</th>
+
+                            @role('admin')
+                                <th class="px-6 py-3 text-center">Acciones</th>
+                            @endrole
                         </tr>
                     </thead>
 
                     <tbody>
                         @forelse($productos as $producto)
+
                             <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
 
-                                <td class="px-6 py-3 font-medium">
+                                <!-- CODIGO -->
+                                <td class="px-6 py-3 font-semibold text-indigo-600">
                                     {{ $producto->codigo }}
                                 </td>
 
+                                <!-- DESCRIPCION -->
                                 <td class="px-6 py-3">
                                     {{ $producto->descripcion }}
                                 </td>
 
+                                <!-- UNIDAD -->
                                 <td class="px-6 py-3">
                                     {{ $producto->unidad_medida }}
                                 </td>
 
-                                <td class="px-6 py-3 font-semibold">
-                                    {{
-                                        $producto->entradas->sum('cantidad')
-                                        - $producto->salidas->sum('cantidad')
-                                    }}
+                                <!-- STOCK -->
+                                <td class="px-6 py-3">
+
+                                    @php
+                                        $stock =
+                                            $producto->entradas->sum('cantidad')
+                                            - $producto->salidas->sum('cantidad');
+                                    @endphp
+
+                                    @if($stock > 20)
+
+                                        <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">
+                                            {{ $stock }}
+                                        </span>
+
+                                    @elseif($stock > 0)
+
+                                        <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">
+                                            {{ $stock }}
+                                        </span>
+
+                                    @else
+
+                                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">
+                                            {{ $stock }}
+                                        </span>
+
+                                    @endif
+
                                 </td>
+
                                 @role('admin')
+
+                                <!-- ACCIONES -->
                                 <td class="px-6 py-3 text-center space-x-2">
 
                                     <a href="{{ route('productos.edit', $producto->id) }}"
-                                       class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs">
+                                       class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs shadow">
                                         Editar
                                     </a>
 
@@ -99,31 +171,42 @@
                                           method="POST"
                                           class="inline-block"
                                           onsubmit="return confirm('¿Eliminar producto?')">
+
                                         @csrf
                                         @method('DELETE')
 
                                         <button type="submit"
-                                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
+                                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs shadow">
                                             Eliminar
                                         </button>
+
                                     </form>
 
                                 </td>
+
                                 @endrole
+
                             </tr>
+
                         @empty
+
                             <tr>
-                                <td colspan="5" class="text-center py-6 text-gray-500">
+                                <td colspan="5"
+                                    class="text-center py-6 text-gray-500">
+
                                     No hay productos registrados
+
                                 </td>
                             </tr>
+
                         @endforelse
                     </tbody>
 
                 </table>
+
             </div>
 
-            <!-- 🔢 PAGINACIÓN -->
+            <!-- PAGINACION -->
             <div class="mt-4">
                 {{ $productos->links() }}
             </div>
