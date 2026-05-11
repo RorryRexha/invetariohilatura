@@ -6,7 +6,10 @@
 
             <!-- LOGO -->
             <div class="flex items-center space-x-4">
-                <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
+
+                <a href="{{ route('dashboard') }}"
+                   class="flex items-center space-x-2">
+
                     <img src="/images/logoSatex.png"
                          alt="Logo"
                          class="h-12 w-auto object-contain">
@@ -24,8 +27,9 @@
                         Dashboard
                     </a>
 
-                    <!-- PRODUCTOS (ADMIN + ALMACEN) -->
-                    @role('admin|almacen')
+                    <!-- PRODUCTOS -->
+                    @hasanyrole('admin|almacen|compras')
+
                         <a href="{{ route('productos.index') }}"
                            class="transition px-2 py-1 rounded
                            {{ request()->routeIs('productos.*')
@@ -33,10 +37,12 @@
                                 : 'text-gray-600 hover:text-blue-600' }}">
                             Productos
                         </a>
-                    @endrole
 
-                    <!-- ENTRADAS (SOLO ADMIN) -->
-                    @role('admin')
+                    @endhasanyrole
+
+                    <!-- ENTRADAS -->
+                    @hasanyrole('admin|compras')
+
                         <a href="{{ route('entradas.index') }}"
                            class="transition px-2 py-1 rounded
                            {{ request()->routeIs('entradas.*')
@@ -45,7 +51,24 @@
                             Entradas
                         </a>
 
-                        <!-- USUARIOS -->
+                    @endhasanyrole
+
+                    <!-- SALIDAS -->
+                    @hasanyrole('admin|almacen')
+
+                        <a href="{{ route('salidas.index') }}"
+                           class="transition px-2 py-1 rounded
+                           {{ request()->routeIs('salidas.*')
+                                ? 'bg-red-100 text-red-600 font-semibold'
+                                : 'text-gray-600 hover:text-red-600' }}">
+                            Salidas
+                        </a>
+
+                    @endhasanyrole
+
+                    <!-- USUARIOS -->
+                    @role('admin')
+
                         <a href="{{ route('users.index') }}"
                            class="transition px-2 py-1 rounded
                            {{ request()->routeIs('users.*')
@@ -53,16 +76,8 @@
                                 : 'text-gray-600 hover:text-indigo-600' }}">
                             Usuarios
                         </a>
-                    @endrole
 
-                    <!-- SALIDAS (TODOS) -->
-                    <a href="{{ route('salidas.index') }}"
-                       class="transition px-2 py-1 rounded
-                       {{ request()->routeIs('salidas.*')
-                            ? 'bg-red-100 text-red-600 font-semibold'
-                            : 'text-gray-600 hover:text-red-600' }}">
-                        Salidas
-                    </a>
+                    @endrole
 
                 </div>
             </div>
@@ -71,6 +86,7 @@
             <div class="hidden sm:flex items-center space-x-4">
 
                 <div class="text-right">
+
                     <p class="text-sm font-semibold text-gray-700">
                         {{ Auth::user()->name }}
                     </p>
@@ -78,10 +94,12 @@
                     <p class="text-xs text-gray-500 uppercase">
                         {{ Auth::user()->getRoleNames()->first() }}
                     </p>
+
                 </div>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
+
                     <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm shadow">
                         Salir
                     </button>
@@ -91,10 +109,12 @@
 
             <!-- MOBILE -->
             <div class="sm:hidden flex items-center">
+
                 <button @click="open = !open"
                         class="text-gray-700 text-2xl font-bold">
                     ☰
                 </button>
+
             </div>
 
         </div>
@@ -105,34 +125,55 @@
          x-transition
          class="sm:hidden bg-white border-t px-4 py-3 space-y-2">
 
-        <a href="{{ route('dashboard') }}" class="block text-gray-700">
+        <!-- DASHBOARD -->
+        <a href="{{ route('dashboard') }}"
+           class="block text-gray-700">
             Dashboard
         </a>
 
-        <!-- PRODUCTOS (ADMIN + ALMACEN) -->
-        @role('admin|almacen')
-            <a href="{{ route('productos.index') }}" class="block text-gray-700">
+        <!-- PRODUCTOS -->
+        @hasanyrole('admin|almacen|compras')
+
+            <a href="{{ route('productos.index') }}"
+               class="block text-gray-700">
                 Productos
             </a>
-        @endrole
 
-        <!-- ENTRADAS Y USUARIOS (SOLO ADMIN) -->
-        @role('admin')
-            <a href="{{ route('entradas.index') }}" class="block text-gray-700">
+        @endhasanyrole
+
+        <!-- ENTRADAS -->
+        @hasanyrole('admin|compras')
+
+            <a href="{{ route('entradas.index') }}"
+               class="block text-gray-700">
                 Entradas
             </a>
 
-            <a href="{{ route('users.index') }}" class="block text-gray-700">
-                Usuarios
-            </a>
-        @endrole
+        @endhasanyrole
 
         <!-- SALIDAS -->
-        <a href="{{ route('salidas.index') }}" class="block text-gray-700">
-            Salidas
-        </a>
+        @hasanyrole('admin|almacen')
 
+            <a href="{{ route('salidas.index') }}"
+               class="block text-gray-700">
+                Salidas
+            </a>
+
+        @endhasanyrole
+
+        <!-- USUARIOS -->
+        @role('admin')
+
+            <a href="{{ route('users.index') }}"
+               class="block text-gray-700">
+                Usuarios
+            </a>
+
+        @endrole
+
+        <!-- INFO USER -->
         <div class="pt-2 border-t">
+
             <p class="text-sm font-semibold text-gray-700">
                 {{ Auth::user()->name }}
             </p>
@@ -140,10 +181,13 @@
             <p class="text-xs text-gray-500 uppercase">
                 {{ Auth::user()->getRoleNames()->first() }}
             </p>
+
         </div>
 
+        <!-- LOGOUT -->
         <form method="POST" action="{{ route('logout') }}">
             @csrf
+
             <button class="w-full text-left text-red-500 mt-2">
                 Cerrar sesión
             </button>

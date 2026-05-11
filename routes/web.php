@@ -37,9 +37,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | PERFIL
     |--------------------------------------------------------------------------
     */
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 
     /*
     |--------------------------------------------------------------------------
@@ -47,26 +52,50 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    // 👀 Todos pueden ver
-    Route::get('productos', [ProductoController::class, 'index'])->name('productos.index');
+    // 👀 ADMIN + ALMACEN + COMPRAS pueden ver
+    Route::middleware('role:admin|almacen|compras')->group(function () {
 
-    // 🔐 Solo admin
+        Route::get('productos', [ProductoController::class, 'index'])
+            ->name('productos.index');
+
+    });
+
+    // 🔐 SOLO ADMIN administra productos
     Route::middleware('role:admin')->group(function () {
-        Route::get('productos/create', [ProductoController::class, 'create'])->name('productos.create');
-        Route::post('productos', [ProductoController::class, 'store'])->name('productos.store');
-        Route::get('productos/{id}/edit', [ProductoController::class, 'edit'])->name('productos.edit');
-        Route::put('productos/{id}', [ProductoController::class, 'update'])->name('productos.update');
-        Route::delete('productos/{id}', [ProductoController::class, 'destroy'])->name('productos.destroy');
+
+        Route::get('productos/create', [ProductoController::class, 'create'])
+            ->name('productos.create');
+
+        Route::post('productos', [ProductoController::class, 'store'])
+            ->name('productos.store');
+
+        Route::get('productos/{id}/edit', [ProductoController::class, 'edit'])
+            ->name('productos.edit');
+
+        Route::put('productos/{id}', [ProductoController::class, 'update'])
+            ->name('productos.update');
+
+        Route::delete('productos/{id}', [ProductoController::class, 'destroy'])
+            ->name('productos.destroy');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | ENTRADAS (SOLO ADMIN)
+    | ENTRADAS
     |--------------------------------------------------------------------------
     */
-    Route::middleware('role:admin')->group(function () {
 
-        Route::resource('entradas', EntradaController::class);
+    // 👀 ADMIN + COMPRAS pueden ver y crear
+    Route::middleware('role:admin|compras')->group(function () {
+
+        Route::get('entradas', [EntradaController::class, 'index'])
+            ->name('entradas.index');
+
+        Route::get('entradas/create', [EntradaController::class, 'create'])
+            ->name('entradas.create');
+
+        Route::post('entradas', [EntradaController::class, 'store'])
+            ->name('entradas.store');
 
         Route::get('/entradas-excel', [EntradaController::class, 'exportExcel'])
             ->name('entradas.excel');
@@ -75,42 +104,68 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('entradas.pdf');
     });
 
+    // 🔐 SOLO ADMIN edita/elimina entradas
+    Route::middleware('role:admin')->group(function () {
+
+        Route::get('entradas/{id}/edit', [EntradaController::class, 'edit'])
+            ->name('entradas.edit');
+
+        Route::put('entradas/{id}', [EntradaController::class, 'update'])
+            ->name('entradas.update');
+
+        Route::delete('entradas/{id}', [EntradaController::class, 'destroy'])
+            ->name('entradas.destroy');
+    });
+
     /*
     |--------------------------------------------------------------------------
     | SALIDAS
     |--------------------------------------------------------------------------
     */
 
-    // 👀 Todos pueden ver
-    Route::get('salidas', [SalidaController::class, 'index'])->name('salidas.index');
-
-    // ➕ Admin + Almacen pueden crear
+    // 👀 ADMIN + ALMACEN pueden ver y crear
     Route::middleware('role:admin|almacen')->group(function () {
-        Route::get('salidas/create', [SalidaController::class, 'create'])->name('salidas.create');
-        Route::post('salidas', [SalidaController::class, 'store'])->name('salidas.store');
+
+        Route::get('salidas', [SalidaController::class, 'index'])
+            ->name('salidas.index');
+
+        Route::get('salidas/create', [SalidaController::class, 'create'])
+            ->name('salidas.create');
+
+        Route::post('salidas', [SalidaController::class, 'store'])
+            ->name('salidas.store');
+
+        Route::get('/salidas-excel', [SalidaController::class, 'exportExcel'])
+            ->name('salidas.excel');
+
+        Route::get('/salidas-pdf', [SalidaController::class, 'pdf'])
+            ->name('salidas.pdf');
     });
 
-    // 🔐 Solo admin edita/elimina
+    // 🔐 SOLO ADMIN edita/elimina salidas
     Route::middleware('role:admin')->group(function () {
-        Route::get('salidas/{id}/edit', [SalidaController::class, 'edit'])->name('salidas.edit');
-        Route::put('salidas/{id}', [SalidaController::class, 'update'])->name('salidas.update');
-        Route::delete('salidas/{id}', [SalidaController::class, 'destroy'])->name('salidas.destroy');
+
+        Route::get('salidas/{id}/edit', [SalidaController::class, 'edit'])
+            ->name('salidas.edit');
+
+        Route::put('salidas/{id}', [SalidaController::class, 'update'])
+            ->name('salidas.update');
+
+        Route::delete('salidas/{id}', [SalidaController::class, 'destroy'])
+            ->name('salidas.destroy');
     });
-
-    // 📊 reportes
-    Route::get('/salidas-excel', [SalidaController::class, 'exportExcel'])
-        ->name('salidas.excel');
-
-    Route::get('/salidas-pdf', [SalidaController::class, 'pdf'])
-        ->name('salidas.pdf');
 
     /*
     |--------------------------------------------------------------------------
-    | USUARIOS (SOLO ADMIN)
+    | USUARIOS
     |--------------------------------------------------------------------------
     */
+
+    // 🔐 SOLO ADMIN
     Route::middleware('role:admin')->group(function () {
+
         Route::resource('users', UserController::class);
+
     });
 
 });

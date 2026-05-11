@@ -148,33 +148,29 @@
                                 </td>
 
                                 <!-- ACCIONES -->
+                                @role('admin')
                                 <td class="px-6 py-3 text-center space-x-2">
 
-                                    <a
-                                        href="{{ route('entradas.edit', $entrada->id) }}"
-                                        class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs"
-                                    >
+                                    <a href="{{ route('entradas.edit', $entrada->id) }}"
+                                        class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs">
                                         Editar
                                     </a>
 
-                                    <form
-                                        action="{{ route('entradas.destroy', $entrada->id) }}"
-                                        method="POST"
-                                        class="inline-block"
-                                        onsubmit="return confirm('¿Eliminar entrada?')"
-                                    >
+                                    <form action="{{ route('entradas.destroy', $entrada->id) }}"
+                                          method="POST"
+                                          class="inline-block"
+                                          onsubmit="return confirm('¿Eliminar entrada?')">
                                         @csrf
                                         @method('DELETE')
 
-                                        <button
-                                            type="submit"
-                                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
-                                        >
+                                        <button type="submit"
+                                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
                                             Eliminar
                                         </button>
                                     </form>
 
                                 </td>
+                                @endrole
 
                             </tr>
                         @empty

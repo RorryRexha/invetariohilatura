@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8" x-data="{ search: '' }">
+    <div class="py-8">
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
@@ -19,31 +19,45 @@
                 <!-- CONTROLES -->
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
 
-                    <!-- BUSCADOR -->
-                    <input 
-                        type="text"
-                        x-model="search"
-                        placeholder="Buscar por folio, código o producto..."
-                        class="px-4 py-2 border rounded-lg shadow-sm w-full sm:w-64"
-                    >
+                    <!-- FORM BUSCADOR -->
+                    <form method="GET"
+                          action="{{ route('salidas.index') }}"
+                          class="flex flex-col sm:flex-row gap-2">
+
+                        <input
+                            type="text"
+                            name="buscar"
+                            value="{{ request('buscar') }}"
+                            placeholder="Buscar por folio, código o producto..."
+                            class="px-4 py-2 border rounded-lg shadow-sm w-full sm:w-64"
+                        >
+
+                        <button type="submit"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow">
+                            Buscar
+                        </button>
+
+                    </form>
 
                     <!-- EXCEL -->
-                    <a href="{{ route('salidas.excel') }}"
+                    <a href="{{ route('salidas.excel', ['buscar' => request('buscar')]) }}"
                        class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded shadow text-center">
                         Excel
                     </a>
 
                     <!-- PDF -->
-                    <a href="{{ route('salidas.pdf') }}"
+                    <a href="{{ route('salidas.pdf', ['buscar' => request('buscar')]) }}"
                        class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded shadow text-center">
                         PDF
                     </a>
 
                     <!-- NUEVA -->
+                    @role('admin|almacen')
                     <a href="{{ route('salidas.create') }}"
                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow text-center">
                         + Nueva
                     </a>
+                    @endrole
 
                 </div>
 
@@ -75,20 +89,19 @@
                             <th class="px-6 py-3">Cantidad</th>
                             <th class="px-6 py-3">Fecha</th>
                             <th class="px-6 py-3">Stock actual</th>
-                            <th class="px-6 py-3 text-center">Acciones</th>
+
+                            @role('admin')
+                            <th class="px-6 py-3 text-center">
+                                Acciones
+                            </th>
+                            @endrole
                         </tr>
                     </thead>
 
                     <tbody>
                         @forelse($salidas as $salida)
-                            <tr 
-                                x-show="
-                                    '{{ strtolower($salida->folio ?? '') }}'.includes(search.toLowerCase()) ||
-                                    '{{ strtolower($salida->producto->codigo ?? '') }}'.includes(search.toLowerCase()) ||
-                                    '{{ strtolower($salida->producto->descripcion ?? '') }}'.includes(search.toLowerCase())
-                                "
-                                class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-                            >
+
+                            <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
 
                                 <!-- FOLIO -->
                                 <td class="px-6 py-3">
@@ -127,7 +140,7 @@
                                 </td>
 
                                 <!-- ACCIONES -->
-                                 @role('admin')
+                                @role('admin')
                                 <td class="px-6 py-3 text-center space-x-2">
 
                                     <a href="{{ route('salidas.edit', $salida->id) }}"
@@ -139,6 +152,7 @@
                                           method="POST"
                                           class="inline-block"
                                           onsubmit="return confirm('¿Eliminar salida?')">
+
                                         @csrf
                                         @method('DELETE')
 
@@ -146,18 +160,22 @@
                                                 class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs">
                                             Eliminar
                                         </button>
+
                                     </form>
 
                                 </td>
                                 @endrole
 
                             </tr>
+
                         @empty
+
                             <tr>
                                 <td colspan="7" class="text-center py-6 text-gray-500">
                                     No hay salidas registradas
                                 </td>
                             </tr>
+
                         @endforelse
                     </tbody>
 
