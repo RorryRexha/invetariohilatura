@@ -42,6 +42,7 @@ class SalidasExport implements FromCollection, WithHeadings
                     'producto' => $salida->producto->descripcion ?? 'N/A',
                     'cantidad' => $salida->cantidad,
                     'fecha' => $salida->fecha,
+                    'motivo' => $salida->motivo_salida,
                 ];
 
             });
@@ -53,7 +54,8 @@ class SalidasExport implements FromCollection, WithHeadings
             'Folio',
             'Producto',
             'Cantidad',
-            'Fecha'
+            'Fecha',
+            'Motivo'
         ];
     }
 }

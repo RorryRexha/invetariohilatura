@@ -20,14 +20,22 @@ class SalidaController extends Controller
 
             ->when($buscar, function ($query) use ($buscar) {
 
-                $query->where('folio', 'LIKE', "%{$buscar}%")
+                $query->where(function ($q) use ($buscar) {
 
-                    ->orWhereHas('producto', function ($q) use ($buscar) {
+                    $q->where('folio', 'LIKE', "%{$buscar}%")
 
-                        $q->where('descripcion', 'LIKE', "%{$buscar}%")
-                          ->orWhere('codigo', 'LIKE', "%{$buscar}%");
+                      // BUSCAR EN MOTIVO DE SALIDA
+                      ->orWhere('motivo_salida', 'LIKE', "%{$buscar}%")
 
-                    });
+                      // BUSCAR EN PRODUCTOS
+                      ->orWhereHas('producto', function ($sub) use ($buscar) {
+
+                          $sub->where('descripcion', 'LIKE', "%{$buscar}%")
+                              ->orWhere('codigo', 'LIKE', "%{$buscar}%");
+
+                      });
+
+                });
 
             })
 
@@ -52,14 +60,16 @@ class SalidaController extends Controller
             'producto_id' => 'required|exists:productos,id',
             'cantidad' => 'required|numeric|min:1',
             'fecha' => 'required|date',
+            'motivo_salida' => 'nullable|string|max:500',
         ]);
 
         $producto = Producto::with(['entradas', 'salidas'])
             ->findOrFail($request->producto_id);
 
         // STOCK DINÁMICO
-        $stockActual = $producto->entradas->sum('cantidad')
-                      - $producto->salidas->sum('cantidad');
+        $stockActual =
+            $producto->entradas->sum('cantidad')
+            - $producto->salidas->sum('cantidad');
 
         // VALIDACIÓN
         if ($request->cantidad > $stockActual) {
@@ -81,7 +91,8 @@ class SalidaController extends Controller
             'producto_id' => $request->producto_id,
             'cantidad' => $request->cantidad,
             'fecha' => $request->fecha,
-            'folio' => $folio
+            'folio' => $folio,
+            'motivo_salida' => $request->motivo_salida,
         ]);
 
         return redirect()->route('salidas.index')
@@ -107,14 +118,16 @@ class SalidaController extends Controller
             'producto_id' => 'required|exists:productos,id',
             'cantidad' => 'required|numeric|min:1',
             'fecha' => 'required|date',
+            'motivo_salida' => 'nullable|string|max:500',
         ]);
 
         $producto = Producto::with(['entradas', 'salidas'])
             ->findOrFail($request->producto_id);
 
         // STOCK ACTUAL
-        $stockActual = $producto->entradas->sum('cantidad')
-                      - $producto->salidas->sum('cantidad');
+        $stockActual =
+            $producto->entradas->sum('cantidad')
+            - $producto->salidas->sum('cantidad');
 
         // SUMAR LO ANTERIOR
         $stockDisponible = $stockActual + $salida->cantidad;
@@ -132,6 +145,7 @@ class SalidaController extends Controller
             'producto_id' => $request->producto_id,
             'cantidad' => $request->cantidad,
             'fecha' => $request->fecha,
+            'motivo_salida' => $request->motivo_salida,
         ]);
 
         return redirect()->route('salidas.index')
@@ -167,14 +181,22 @@ class SalidaController extends Controller
 
             ->when($buscar, function ($query) use ($buscar) {
 
-                $query->where('folio', 'LIKE', "%{$buscar}%")
+                $query->where(function ($q) use ($buscar) {
 
-                    ->orWhereHas('producto', function ($q) use ($buscar) {
+                    $q->where('folio', 'LIKE', "%{$buscar}%")
 
-                        $q->where('descripcion', 'LIKE', "%{$buscar}%")
-                          ->orWhere('codigo', 'LIKE', "%{$buscar}%");
+                      // BUSCAR EN MOTIVO DE SALIDA
+                      ->orWhere('motivo_salida', 'LIKE', "%{$buscar}%")
 
-                    });
+                      // BUSCAR EN PRODUCTOS
+                      ->orWhereHas('producto', function ($sub) use ($buscar) {
+
+                          $sub->where('descripcion', 'LIKE', "%{$buscar}%")
+                              ->orWhere('codigo', 'LIKE', "%{$buscar}%");
+
+                      });
+
+                });
 
             })
 

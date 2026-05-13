@@ -10,7 +10,8 @@ class Salida extends Model
         'folio',
         'producto_id',
         'cantidad',
-        'fecha'
+        'fecha',
+        'motivo_salida'
     ];
 
     public function producto()

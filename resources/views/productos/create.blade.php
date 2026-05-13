@@ -1,92 +1,177 @@
 <x-app-layout>
+
+    <!-- HEADER -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Crear Producto') }}
-        </h2>
+
+        
+
     </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8">
 
-            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                <form action="{{ route('productos.store') }}" method="POST">
-                    @csrf
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
 
-                    <!-- Código -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Código
-                        </label>
-                        <input 
-                            type="text" 
-                            name="codigo" 
-                            value="{{ old('codigo') }}"
-                            oninput="this.value = this.value.toUpperCase()"
-                            class="mt-1 w-full uppercase rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="EJ. PROD-001"
-                        >
-                        @error('codigo')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                <!-- TOP BAR -->
+                <div class="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-5">
 
-                    <!-- Descripción -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Descripción
-                        </label>
-                        <input 
-                            type="text" 
-                            name="descripcion" 
-                            value="{{ old('descripcion') }}"
-                            oninput="this.value = this.value.toUpperCase()"
-                            class="mt-1 w-full uppercase rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="NOMBRE DEL PRODUCTO"
-                        >
-                        @error('descripcion')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <h3 class="text-lg font-bold text-white">
+                        Información del Producto
+                    </h3>
 
-                    <!-- Unidad de medida -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Unidad de Medida
-                        </label>
-                        <select 
-                            name="unidad_medida"
-                            class="mt-1 w-full uppercase rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                        >
-                            <option value="">SELECCIONA UNA UNIDAD</option>
-                            <option value="PIEZAS">PIEZAS</option>
-                            <option value="LITROS">LITROS</option>
-                            <option value="KG">KILOGRAMOS</option>
-                            <option value="METROS">METROS</option>
-                        </select>
-                        @error('unidad_medida')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <p class="text-sm text-indigo-100 mt-1">
+                        Completa todos los campos requeridos
+                    </p>
 
-                    <!-- Botones -->
-                    <div class="flex justify-end gap-3">
-                        <a href="{{ route('productos.index') }}" 
-                           class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
-                            Cancelar
-                        </a>
+                </div>
 
-                        <button 
-                            type="submit"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                            Guardar
-                        </button>
-                    </div>
+                <!-- FORM -->
+                <div class="p-6 md:p-8">
 
-                </form>
+                    <form action="{{ route('productos.store') }}"
+                          method="POST"
+                          class="space-y-6">
+
+                        @csrf
+
+                        <!-- CODIGO -->
+                        <div>
+
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Código
+                            </label>
+
+                            <input
+                                type="text"
+                                name="codigo"
+                                value="{{ old('codigo') }}"
+                                oninput="this.value = this.value.toUpperCase()"
+                                placeholder="EJ. PROD-001"
+                                class="w-full uppercase rounded-xl border-gray-300 dark:border-gray-600
+                                       dark:bg-gray-900 dark:text-white
+                                       shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+
+                            @error('codigo')
+
+                                <p class="text-red-500 text-sm mt-2">
+                                    {{ $message }}
+                                </p>
+
+                            @enderror
+
+                        </div>
+
+                        <!-- DESCRIPCION -->
+                        <div>
+
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Descripción
+                            </label>
+
+                            <input
+                                type="text"
+                                name="descripcion"
+                                value="{{ old('descripcion') }}"
+                                oninput="this.value = this.value.toUpperCase()"
+                                placeholder="NOMBRE DEL PRODUCTO"
+                                class="w-full uppercase rounded-xl border-gray-300 dark:border-gray-600
+                                       dark:bg-gray-900 dark:text-white
+                                       shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+
+                            @error('descripcion')
+
+                                <p class="text-red-500 text-sm mt-2">
+                                    {{ $message }}
+                                </p>
+
+                            @enderror
+
+                        </div>
+
+                        <!-- UNIDAD -->
+                        <div>
+
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Unidad de Medida
+                            </label>
+
+                            <select
+                                name="unidad_medida"
+                                class="w-full rounded-xl border-gray-300 dark:border-gray-600
+                                       dark:bg-gray-900 dark:text-white
+                                       shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+
+                                <option value="">
+                                    SELECCIONA UNA UNIDAD
+                                </option>
+
+                                <option value="PIEZAS"
+                                    {{ old('unidad_medida') == 'PIEZAS' ? 'selected' : '' }}>
+                                    PIEZAS
+                                </option>
+
+                                <option value="LITROS"
+                                    {{ old('unidad_medida') == 'LITROS' ? 'selected' : '' }}>
+                                    LITROS
+                                </option>
+
+                                <option value="KG"
+                                    {{ old('unidad_medida') == 'KG' ? 'selected' : '' }}>
+                                    KILOGRAMOS
+                                </option>
+
+                                <option value="METROS"
+                                    {{ old('unidad_medida') == 'METROS' ? 'selected' : '' }}>
+                                    METROS
+                                </option>
+
+                            </select>
+
+                            @error('unidad_medida')
+
+                                <p class="text-red-500 text-sm mt-2">
+                                    {{ $message }}
+                                </p>
+
+                            @enderror
+
+                        </div>
+
+                        <!-- BOTONES -->
+                        <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+
+                            <a href="{{ route('productos.index') }}"
+                               class="px-5 py-3 bg-gray-500 hover:bg-gray-600
+                                      text-white rounded-xl shadow transition text-center">
+
+                                Cancelar
+
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700
+                                       text-white rounded-xl shadow-lg
+                                       transition font-semibold">
+
+                                Guardar Producto
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
 
             </div>
 
         </div>
+
     </div>
+
 </x-app-layout>
